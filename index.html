@@ -1,0 +1,420 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Live Nifty 15-Minute Alarm System</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Arial', sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            color: white;
+        }
+
+        .container {
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(20px);
+            border-radius: 20px;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            padding: 40px;
+            text-align: center;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+            min-width: 450px;
+        }
+
+        h1 {
+            font-size: 2.5rem;
+            margin-bottom: 10px;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
+        }
+
+        .subtitle {
+            font-size: 1.1rem;
+            opacity: 0.8;
+            margin-bottom: 30px;
+        }
+
+        .current-time {
+            font-size: 2rem;
+            color: #00ff88;
+            font-family: 'Courier New', monospace;
+            margin-bottom: 20px;
+        }
+
+        .next-alarm-time {
+            font-size: 1.8rem;
+            color: #ffaa00;
+            font-family: 'Courier New', monospace;
+            margin-bottom: 10px;
+        }
+
+        .countdown-display {
+            font-size: 3rem;
+            font-weight: bold;
+            margin: 30px 0;
+            color: #ff6b6b;
+            text-shadow: 0 0 20px rgba(255, 107, 107, 0.3);
+            font-family: 'Courier New', monospace;
+        }
+
+        .controls {
+            display: flex;
+            gap: 20px;
+            justify-content: center;
+            margin: 30px 0;
+        }
+
+        button {
+            background: linear-gradient(145deg, #00ff88, #00cc70);
+            border: none;
+            border-radius: 50px;
+            padding: 15px 30px;
+            font-size: 1.1rem;
+            font-weight: bold;
+            color: white;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 5px 15px rgba(0, 255, 136, 0.3);
+        }
+
+        button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(0, 255, 136, 0.4);
+        }
+
+        button:active {
+            transform: translateY(0);
+        }
+
+        button:disabled {
+            background: #666;
+            cursor: not-allowed;
+            box-shadow: none;
+        }
+
+        button.stop {
+            background: linear-gradient(145deg, #ff6b6b, #cc5555);
+            box-shadow: 0 5px 15px rgba(255, 107, 107, 0.3);
+        }
+
+        .status {
+            font-size: 1.2rem;
+            margin: 20px 0;
+            padding: 15px;
+            border-radius: 10px;
+            background: rgba(255, 255, 255, 0.1);
+        }
+
+        .status.active {
+            background: rgba(0, 255, 136, 0.2);
+            border: 2px solid rgba(0, 255, 136, 0.5);
+        }
+
+        .intervals-info {
+            font-size: 0.9rem;
+            opacity: 0.7;
+            margin-top: 15px;
+            line-height: 1.4;
+        }
+
+        .alarm-notification {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background: linear-gradient(145deg, #ff4444, #cc0000);
+            color: white;
+            padding: 40px;
+            border-radius: 20px;
+            font-size: 2rem;
+            font-weight: bold;
+            text-align: center;
+            box-shadow: 0 20px 40px rgba(255, 68, 68, 0.5);
+            z-index: 1000;
+            display: none;
+            animation: pulse 1s infinite;
+            max-width: 90vw;
+        }
+
+        @keyframes pulse {
+            0%, 100% { transform: translate(-50%, -50%) scale(1); }
+            50% { transform: translate(-50%, -50%) scale(1.05); }
+        }
+
+        .overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.8);
+            z-index: 999;
+            display: none;
+        }
+
+        .dismiss-btn {
+            margin-top: 20px;
+            background: rgba(255, 255, 255, 0.2);
+            font-size: 1rem;
+        }
+
+        .alarm-count {
+            color: #00ff88;
+            font-size: 1rem;
+            margin-top: 10px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>📈 LIVE NIFTY TIMER</h1>
+        <p class="subtitle">Real-Time 15-Minute Market Alert System</p>
+        
+        <div class="current-time" id="currentTime"></div>
+        
+        <div class="next-alarm-time" id="nextAlarmTime"></div>
+        
+        <div class="countdown-display" id="countdownDisplay">--:--</div>
+        
+        <div class="controls">
+            <button id="startBtn">Enable Alarms</button>
+            <button id="stopBtn" class="stop" disabled>Disable Alarms</button>
+        </div>
+        
+        <div class="status" id="status">Click "Enable Alarms" to start monitoring 15-minute intervals</div>
+        
+        <div class="alarm-count" id="alarmCount"></div>
+        
+        <div class="intervals-info">
+            Alarms trigger every 15 minutes:<br>
+            :00, :15, :30, :45 of each hour
+        </div>
+    </div>
+
+    <div class="overlay" id="overlay"></div>
+    <div class="alarm-notification" id="alarmNotification">
+        🚨 NIFTY 15-MIN ALERT! 🚨<br>
+        <span style="font-size: 1.2rem;" id="alarmTimeText"></span>
+        <button class="dismiss-btn" onclick="dismissAlarm()">Dismiss</button>
+    </div>
+
+    <script>
+        let isMonitoring = false;
+        let alarmCount = 0;
+        let lastAlarmMinute = null;
+        let clockInterval;
+        let audioContext;
+        let alarmAudioInterval;
+
+        const currentTimeEl = document.getElementById('currentTime');
+        const nextAlarmTimeEl = document.getElementById('nextAlarmTime');
+        const countdownDisplayEl = document.getElementById('countdownDisplay');
+        const startBtn = document.getElementById('startBtn');
+        const stopBtn = document.getElementById('stopBtn');
+        const statusEl = document.getElementById('status');
+        const alarmCountEl = document.getElementById('alarmCount');
+        const overlay = document.getElementById('overlay');
+        const alarmNotification = document.getElementById('alarmNotification');
+        const alarmTimeText = document.getElementById('alarmTimeText');
+
+        function initAudio() {
+            if (!audioContext) {
+                audioContext = new (window.AudioContext || window.webkitAudioContext)();
+            }
+        }
+
+        function playAlarmBeep() {
+            if (!audioContext) return;
+            
+            // Create a louder, more attention-grabbing beep sequence
+            for (let i = 0; i < 4; i++) {
+                setTimeout(() => {
+                    const oscillator = audioContext.createOscillator();
+                    const gainNode = audioContext.createGain();
+                    
+                    oscillator.connect(gainNode);
+                    gainNode.connect(audioContext.destination);
+                    
+                    // Alternating high and low tones - much louder
+                    const frequency = i % 2 === 0 ? 1200 : 800;
+                    oscillator.frequency.setValueAtTime(frequency, audioContext.currentTime);
+                    gainNode.gain.setValueAtTime(0.8, audioContext.currentTime); // Much louder
+                    gainNode.gain.exponentialRampToValueAtTime(0.01, audioContext.currentTime + 0.4);
+                    
+                    oscillator.start(audioContext.currentTime);
+                    oscillator.stop(audioContext.currentTime + 0.4);
+                }, i * 200);
+            }
+        }
+
+        function startContinuousAlarm() {
+            if (alarmAudioInterval) return; // Already running
+            
+            // Play initial beep immediately
+            playAlarmBeep();
+            
+            // Continue playing beeps every 1.5 seconds until dismissed
+            alarmAudioInterval = setInterval(() => {
+                playAlarmBeep();
+            }, 1500);
+        }
+
+        function stopContinuousAlarm() {
+            if (alarmAudioInterval) {
+                clearInterval(alarmAudioInterval);
+                alarmAudioInterval = null;
+            }
+        }
+
+        function getNext15MinuteInterval(date) {
+            const minutes = date.getMinutes();
+            const seconds = date.getSeconds();
+            
+            // Find next 15-minute mark
+            let nextMinute;
+            if (minutes < 15) nextMinute = 15;
+            else if (minutes < 30) nextMinute = 30;
+            else if (minutes < 45) nextMinute = 45;
+            else nextMinute = 60; // Next hour
+            
+            const nextAlarm = new Date(date);
+            if (nextMinute === 60) {
+                nextAlarm.setHours(nextAlarm.getHours() + 1);
+                nextAlarm.setMinutes(0);
+            } else {
+                nextAlarm.setMinutes(nextMinute);
+            }
+            nextAlarm.setSeconds(0);
+            nextAlarm.setMilliseconds(0);
+            
+            return nextAlarm;
+        }
+
+        function formatTime(date) {
+            return date.toLocaleTimeString('en-US', { 
+                hour12: false,
+                hour: '2-digit',
+                minute: '2-digit',
+                second: '2-digit'
+            });
+        }
+
+        function formatCountdown(seconds) {
+            const mins = Math.floor(seconds / 60);
+            const secs = seconds % 60;
+            return `${mins.toString().padStart(2, '0')}:${secs.toString().padStart(2, '0')}`;
+        }
+
+        function updateClock() {
+            const now = new Date();
+            currentTimeEl.textContent = `Current: ${formatTime(now)}`;
+            
+            const nextAlarm = getNext15MinuteInterval(now);
+            nextAlarmTimeEl.textContent = `Next Alarm: ${formatTime(nextAlarm)}`;
+            
+            // Calculate countdown
+            const timeUntilAlarm = Math.floor((nextAlarm - now) / 1000);
+            countdownDisplayEl.textContent = formatCountdown(timeUntilAlarm);
+            
+            // Check if we should trigger alarm
+            if (isMonitoring && timeUntilAlarm <= 0 && lastAlarmMinute !== nextAlarm.getTime()) {
+                triggerAlarm(nextAlarm);
+                lastAlarmMinute = nextAlarm.getTime();
+            }
+        }
+
+        function triggerAlarm(alarmTime) {
+            alarmCount++;
+            playAlarmSound();
+            
+            alarmTimeText.textContent = `15-minute interval at ${formatTime(alarmTime)}`;
+            overlay.style.display = 'block';
+            alarmNotification.style.display = 'block';
+            document.body.style.overflow = 'hidden';
+            
+            alarmCountEl.textContent = `Alarms triggered today: ${alarmCount}`;
+            
+            // Auto-dismiss after 10 seconds
+            setTimeout(() => {
+                if (overlay.style.display === 'block') {
+                    dismissAlarm();
+                }
+            }, 10000);
+        }
+
+        function dismissAlarm() {
+            overlay.style.display = 'none';
+            alarmNotification.style.display = 'none';
+            document.body.style.overflow = 'auto';
+        }
+
+        function startMonitoring() {
+            if (!isMonitoring) {
+                isMonitoring = true;
+                startBtn.disabled = true;
+                stopBtn.disabled = false;
+                statusEl.textContent = 'Monitoring active - Alarms will trigger every 15 minutes';
+                statusEl.classList.add('active');
+                
+                initAudio(); // Initialize audio on user interaction
+                
+                // Start the clock update
+                clockInterval = setInterval(updateClock, 1000);
+                updateClock(); // Initial update
+            }
+        }
+
+        function stopMonitoring() {
+            if (isMonitoring) {
+                isMonitoring = false;
+                startBtn.disabled = false;
+                stopBtn.disabled = true;
+                statusEl.textContent = 'Monitoring disabled - Click "Enable Alarms" to resume';
+                statusEl.classList.remove('active');
+                
+                if (clockInterval) {
+                    clearInterval(clockInterval);
+                }
+            }
+        }
+
+        // Event listeners
+        startBtn.addEventListener('click', startMonitoring);
+        stopBtn.addEventListener('click', stopMonitoring);
+
+        // Keyboard shortcuts
+        document.addEventListener('keydown', (e) => {
+            if (e.code === 'Space') {
+                e.preventDefault();
+                if (isMonitoring) {
+                    stopMonitoring();
+                } else {
+                    startMonitoring();
+                }
+            } else if (e.code === 'Escape') {
+                dismissAlarm();
+            }
+        });
+
+        // Close alarm when clicking overlay
+        overlay.addEventListener('click', dismissAlarm);
+
+        // Start clock display immediately (but not monitoring)
+        setInterval(updateClock, 1000);
+        updateClock();
+
+        // Show initial alarm count
+        alarmCountEl.textContent = `Alarms triggered today: ${alarmCount}`;
+    </script>
+</body>
+</html>
