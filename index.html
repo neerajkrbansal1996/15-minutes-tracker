@@ -3,7 +3,10 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Live Nifty 15-Minute Alarm System</title>
+    <title>⚡ ChronoBlast ⚡</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <style>
         * {
             margin: 0;
@@ -12,119 +15,257 @@
         }
 
         body {
-            font-family: 'Arial', sans-serif;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            min-height: 100vh;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            color: white;
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: #0a0a0a;
+            height: 100vh;
+            margin: 0;
+            padding: 20px;
+            color: #ffffff;
+            overflow-x: hidden;
         }
 
-        .container {
-            background: rgba(255, 255, 255, 0.1);
-            backdrop-filter: blur(20px);
-            border-radius: 20px;
-            border: 1px solid rgba(255, 255, 255, 0.2);
-            padding: 40px;
+        .dashboard {
+            max-width: 1400px;
+            margin: 0 auto;
+            height: calc(100vh - 40px);
+            display: grid;
+            grid-template-columns: repeat(12, 1fr);
+            grid-template-rows: auto 1fr auto;
+            gap: 20px;
+            overflow-y: auto;
+        }
+
+        .card {
+            background: #1a1a1a;
+            border: 1px solid #2a2a2a;
+            border-radius: 12px;
+            padding: 24px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.3);
+            transition: all 0.3s ease;
+        }
+
+        .card:hover {
+            border-color: #3a3a3a;
+            transform: translateY(-1px);
+            box-shadow: 0 6px 12px rgba(0, 0, 0, 0.4);
+        }
+
+        /* Header Section */
+        .header-section {
+            grid-column: 1 / -1;
             text-align: center;
-            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
-            min-width: 450px;
         }
 
-        h1 {
+        .app-title {
             font-size: 2.5rem;
-            margin-bottom: 10px;
-            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
+            font-weight: 700;
+            margin: 0;
+            background: linear-gradient(135deg, #ffffff, #a0a0a0);
+            -webkit-background-clip: text;
+            background-clip: text;
+            -webkit-text-fill-color: transparent;
         }
 
-        .subtitle {
-            font-size: 1.1rem;
-            opacity: 0.8;
-            margin-bottom: 30px;
+        .app-subtitle {
+            color: #888888;
+            font-size: 1rem;
+            margin: 8px 0 0 0;
+            font-weight: 400;
         }
 
-        .current-time {
-            font-size: 2rem;
-            color: #00ff88;
-            font-family: 'Courier New', monospace;
-            margin-bottom: 20px;
+        /* Time Cards */
+        .time-section {
+            grid-column: 1 / 7;
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
         }
 
-        .next-alarm-time {
+        .time-card {
+            text-align: center;
+        }
+
+        .time-label {
+            color: #888888;
+            font-size: 0.75rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.1em;
+            margin-bottom: 12px;
+        }
+
+        .time-value {
+            font-family: 'SF Mono', 'Monaco', 'Cascadia Code', monospace;
             font-size: 1.8rem;
-            color: #ffaa00;
-            font-family: 'Courier New', monospace;
-            margin-bottom: 10px;
+            font-weight: 600;
+            color: #ffffff;
+            margin: 0;
+        }
+
+        .current-time .time-value {
+            color: #4ade80;
+        }
+
+        .next-alarm-time .time-value {
+            color: #f59e0b;
+        }
+
+        /* Countdown Section */
+        .countdown-section {
+            grid-column: 7 / -1;
+            text-align: center;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+        }
+
+        .countdown-label {
+            color: #888888;
+            font-size: 0.75rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.1em;
+            margin-bottom: 16px;
         }
 
         .countdown-display {
+            font-family: 'SF Mono', 'Monaco', 'Cascadia Code', monospace;
             font-size: 3rem;
-            font-weight: bold;
-            margin: 30px 0;
-            color: #ff6b6b;
-            text-shadow: 0 0 20px rgba(255, 107, 107, 0.3);
-            font-family: 'Courier New', monospace;
+            font-weight: 700;
+            color: #ef4444;
+            margin: 0;
+            text-shadow: 0 0 20px rgba(239, 68, 68, 0.3);
         }
 
-        .controls {
+        /* Controls Section */
+        .controls-section {
+            grid-column: 1 / 7;
             display: flex;
-            gap: 20px;
-            justify-content: center;
-            margin: 30px 0;
+            gap: 16px;
+            align-items: center;
         }
 
-        button {
-            background: linear-gradient(145deg, #00ff88, #00cc70);
-            border: none;
-            border-radius: 50px;
-            padding: 15px 30px;
-            font-size: 1.1rem;
-            font-weight: bold;
-            color: white;
+        .btn {
+            flex: 1;
+            background: #2a2a2a;
+            border: 1px solid #3a3a3a;
+            border-radius: 8px;
+            padding: 12px 20px;
+            font-size: 0.9rem;
+            font-weight: 600;
+            color: #ffffff;
             cursor: pointer;
-            transition: all 0.3s ease;
-            box-shadow: 0 5px 15px rgba(0, 255, 136, 0.3);
+            transition: all 0.2s ease;
         }
 
-        button:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 8px 25px rgba(0, 255, 136, 0.4);
+        .btn:hover {
+            background: #3a3a3a;
+            border-color: #4a4a4a;
+            transform: translateY(-1px);
         }
 
-        button:active {
+        .btn:active {
             transform: translateY(0);
         }
 
-        button:disabled {
-            background: #666;
+        .btn-primary {
+            background: #059669;
+            border-color: #10b981;
+        }
+
+        .btn-primary:hover {
+            background: #047857;
+            border-color: #10b981;
+        }
+
+        .btn-secondary {
+            background: #dc2626;
+            border-color: #ef4444;
+        }
+
+        .btn-secondary:hover {
+            background: #b91c1c;
+            border-color: #ef4444;
+        }
+
+        .btn:disabled {
+            background: #1a1a1a;
+            border-color: #2a2a2a;
+            color: #666666;
             cursor: not-allowed;
-            box-shadow: none;
+            transform: none;
         }
 
-        button.stop {
-            background: linear-gradient(145deg, #ff6b6b, #cc5555);
-            box-shadow: 0 5px 15px rgba(255, 107, 107, 0.3);
+        /* Status Section */
+        .status-section {
+            grid-column: 7 / -1;
+            text-align: center;
         }
 
-        .status {
-            font-size: 1.2rem;
-            margin: 20px 0;
-            padding: 15px;
-            border-radius: 10px;
-            background: rgba(255, 255, 255, 0.1);
+        .status-indicator {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            padding: 8px 16px;
+            border-radius: 20px;
+            font-size: 0.85rem;
+            font-weight: 500;
+            background: #1f2937;
+            border: 1px solid #374151;
+            color: #9ca3af;
         }
 
-        .status.active {
-            background: rgba(0, 255, 136, 0.2);
-            border: 2px solid rgba(0, 255, 136, 0.5);
+        .status-indicator.active {
+            background: #064e3b;
+            border-color: #10b981;
+            color: #10b981;
         }
 
-        .intervals-info {
-            font-size: 0.9rem;
-            opacity: 0.7;
-            margin-top: 15px;
-            line-height: 1.4;
+        .status-dot {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            background: #6b7280;
+        }
+
+        .status-indicator.active .status-dot {
+            background: #10b981;
+            box-shadow: 0 0 4px #10b981;
+        }
+
+        /* Info Sections */
+        .info-section {
+            grid-column: 1 / 7;
+        }
+
+        .alarm-count-section {
+            grid-column: 7 / -1;
+            text-align: center;
+        }
+
+        .section-title {
+            color: #d1d5db;
+            font-size: 0.875rem;
+            font-weight: 600;
+            margin-bottom: 12px;
+        }
+
+        .section-content {
+            color: #9ca3af;
+            font-size: 0.8rem;
+            line-height: 1.5;
+        }
+
+        .alarm-count-value {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: #4ade80;
+            margin-bottom: 4px;
+        }
+
+        .highlight {
+            color: #f59e0b;
+            font-weight: 600;
         }
 
         .alarm-notification {
@@ -132,14 +273,15 @@
             top: 50%;
             left: 50%;
             transform: translate(-50%, -50%);
-            background: linear-gradient(145deg, #ff4444, #cc0000);
+            background: #1a1a1a;
+            border: 2px solid #ef4444;
             color: white;
             padding: 40px;
-            border-radius: 20px;
-            font-size: 2rem;
-            font-weight: bold;
+            border-radius: 16px;
+            font-size: 1.75rem;
+            font-weight: 700;
             text-align: center;
-            box-shadow: 0 20px 40px rgba(255, 68, 68, 0.5);
+            box-shadow: 0 25px 50px rgba(0, 0, 0, 0.8);
             z-index: 1000;
             display: none;
             animation: pulse 1s infinite;
@@ -147,8 +289,14 @@
         }
 
         @keyframes pulse {
-            0%, 100% { transform: translate(-50%, -50%) scale(1); }
-            50% { transform: translate(-50%, -50%) scale(1.05); }
+            0%, 100% { 
+                transform: translate(-50%, -50%) scale(1); 
+                box-shadow: 0 25px 50px rgba(0, 0, 0, 0.8), 0 0 0 0 rgba(239, 68, 68, 0.3);
+            }
+            50% { 
+                transform: translate(-50%, -50%) scale(1.02); 
+                box-shadow: 0 25px 50px rgba(0, 0, 0, 0.8), 0 0 0 4px rgba(239, 68, 68, 0.3);
+            }
         }
 
         .overlay {
@@ -157,56 +305,143 @@
             left: 0;
             width: 100%;
             height: 100%;
-            background: rgba(0, 0, 0, 0.8);
+            background: rgba(0, 0, 0, 0.9);
+            backdrop-filter: blur(4px);
             z-index: 999;
             display: none;
         }
 
         .dismiss-btn {
-            margin-top: 20px;
-            background: rgba(255, 255, 255, 0.2);
-            font-size: 1rem;
+            margin-top: 24px;
+            background: #2a2a2a;
+            border: 1px solid #3a3a3a;
+            color: #ffffff;
+            padding: 12px 24px;
+            border-radius: 8px;
+            font-size: 0.9rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s ease;
         }
 
-        .alarm-count {
-            color: #00ff88;
-            font-size: 1rem;
-            margin-top: 10px;
+        .dismiss-btn:hover {
+            background: #3a3a3a;
+            border-color: #4a4a4a;
+        }
+
+        /* Responsive Design */
+        @media (max-width: 1024px) {
+            .time-section {
+                grid-column: 1 / -1;
+                margin-bottom: 20px;
+            }
+            
+            .countdown-section {
+                grid-column: 1 / -1;
+                margin-bottom: 20px;
+            }
+            
+            .controls-section {
+                grid-column: 1 / -1;
+                margin-bottom: 20px;
+            }
+            
+            .status-section {
+                grid-column: 1 / -1;
+                margin-bottom: 20px;
+            }
+            
+            .info-section {
+                grid-column: 1 / -1;
+            }
+            
+            .alarm-count-section {
+                grid-column: 1 / -1;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .time-section {
+                grid-template-columns: 1fr;
+            }
+            
+            .controls-section {
+                flex-direction: column;
+            }
+            
+            .app-title {
+                font-size: 2rem;
+            }
+            
+            .countdown-display {
+                font-size: 2.5rem;
+            }
         }
     </style>
 </head>
 <body>
-    <div class="container">
-        <h1>📈 LIVE NIFTY TIMER</h1>
-        <p class="subtitle">Real-Time 15-Minute Market Alert System</p>
-        
-        <div class="current-time" id="currentTime"></div>
-        
-        <div class="next-alarm-time" id="nextAlarmTime"></div>
-        
-        <div class="countdown-display" id="countdownDisplay">--:--</div>
-        
-        <div class="controls">
-            <button id="startBtn">Enable Alarms</button>
-            <button id="stopBtn" class="stop" disabled>Disable Alarms</button>
+    <div class="dashboard">
+        <!-- Header Section -->
+        <div class="header-section card">
+            <h1 class="app-title">⚡ CHRONOBLAST ⚡</h1>
+            <p class="app-subtitle">Real-Time Market Alert Dashboard • 15-Minute Precision Monitoring</p>
         </div>
-        
-        <div class="status" id="status">Click "Enable Alarms" to start monitoring 15-minute intervals</div>
-        
-        <div class="alarm-count" id="alarmCount"></div>
-        
-        <div class="intervals-info">
-            Alarms trigger every 15 minutes:<br>
-            :00, :15, :30, :45 of each hour
+
+        <!-- Time Display Section -->
+        <div class="time-section">
+            <div class="time-card card current-time">
+                <div class="time-label">Current Time</div>
+                <div class="time-value" id="currentTime">--:--:--</div>
+            </div>
+            <div class="time-card card next-alarm-time">
+                <div class="time-label">Next Alarm</div>
+                <div class="time-value" id="nextAlarmTime">--:--:--</div>
+            </div>
+        </div>
+
+        <!-- Countdown Section -->
+        <div class="countdown-section card">
+            <div class="countdown-label">Time Until Next Alert</div>
+            <div class="countdown-display" id="countdownDisplay">--:--</div>
+        </div>
+
+        <!-- Controls Section -->
+        <div class="controls-section card">
+            <button id="startBtn" class="btn btn-primary">Enable Monitoring</button>
+            <button id="stopBtn" class="btn btn-secondary" disabled>Disable Monitoring</button>
+        </div>
+
+        <!-- Status Section -->
+        <div class="status-section card">
+            <div class="status-indicator" id="statusIndicator">
+                <div class="status-dot"></div>
+                <span id="statusText">System Offline</span>
+            </div>
+        </div>
+
+        <!-- Info Section -->
+        <div class="info-section card">
+            <div class="section-title">Alert Schedule</div>
+            <div class="section-content">
+                Alarms trigger every 15 minutes:<br>
+                <span class="highlight">:00, :15, :30, :45</span> of each hour
+            </div>
+        </div>
+
+        <!-- Alarm Count Section -->
+        <div class="alarm-count-section card">
+            <div class="section-title">Today's Activity</div>
+            <div class="alarm-count-value" id="alarmCountValue">0</div>
+            <div class="section-content">Alerts Triggered</div>
         </div>
     </div>
 
-    <div class="overlay" id="overlay"></div>
-    <div class="alarm-notification" id="alarmNotification">
-        🚨 NIFTY 15-MIN ALERT! 🚨<br>
-        <span style="font-size: 1.2rem;" id="alarmTimeText"></span>
-        <button class="dismiss-btn" onclick="dismissAlarm()">Dismiss</button>
-    </div>
+         <div class="overlay" id="overlay"></div>
+     <div class="alarm-notification" id="alarmNotification">
+         ⚡ CHRONOBLAST ALERT! ⚡<br>
+         <span style="font-size: 1.2rem;" id="alarmTimeText"></span>
+         <button class="dismiss-btn" onclick="dismissAlarm()">Dismiss</button>
+     </div>
 
     <script>
         let isMonitoring = false;
@@ -221,8 +456,9 @@
         const countdownDisplayEl = document.getElementById('countdownDisplay');
         const startBtn = document.getElementById('startBtn');
         const stopBtn = document.getElementById('stopBtn');
-        const statusEl = document.getElementById('status');
-        const alarmCountEl = document.getElementById('alarmCount');
+        const statusIndicator = document.getElementById('statusIndicator');
+        const statusText = document.getElementById('statusText');
+        const alarmCountValue = document.getElementById('alarmCountValue');
         const overlay = document.getElementById('overlay');
         const alarmNotification = document.getElementById('alarmNotification');
         const alarmTimeText = document.getElementById('alarmTimeText');
@@ -317,10 +553,10 @@
 
         function updateClock() {
             const now = new Date();
-            currentTimeEl.textContent = `Current: ${formatTime(now)}`;
+            currentTimeEl.textContent = formatTime(now);
             
             const nextAlarm = getNext15MinuteInterval(now);
-            nextAlarmTimeEl.textContent = `Next Alarm: ${formatTime(nextAlarm)}`;
+            nextAlarmTimeEl.textContent = formatTime(nextAlarm);
             
             // Calculate countdown
             const timeUntilAlarm = Math.floor((nextAlarm - now) / 1000);
@@ -335,14 +571,14 @@
 
         function triggerAlarm(alarmTime) {
             alarmCount++;
-            playAlarmSound();
+            startContinuousAlarm();
             
             alarmTimeText.textContent = `15-minute interval at ${formatTime(alarmTime)}`;
             overlay.style.display = 'block';
             alarmNotification.style.display = 'block';
             document.body.style.overflow = 'hidden';
             
-            alarmCountEl.textContent = `Alarms triggered today: ${alarmCount}`;
+            alarmCountValue.textContent = alarmCount;
             
             // Auto-dismiss after 10 seconds
             setTimeout(() => {
@@ -353,6 +589,7 @@
         }
 
         function dismissAlarm() {
+            stopContinuousAlarm();
             overlay.style.display = 'none';
             alarmNotification.style.display = 'none';
             document.body.style.overflow = 'auto';
@@ -363,8 +600,8 @@
                 isMonitoring = true;
                 startBtn.disabled = true;
                 stopBtn.disabled = false;
-                statusEl.textContent = 'Monitoring active - Alarms will trigger every 15 minutes';
-                statusEl.classList.add('active');
+                statusText.textContent = 'System Active';
+                statusIndicator.classList.add('active');
                 
                 initAudio(); // Initialize audio on user interaction
                 
@@ -379,8 +616,8 @@
                 isMonitoring = false;
                 startBtn.disabled = false;
                 stopBtn.disabled = true;
-                statusEl.textContent = 'Monitoring disabled - Click "Enable Alarms" to resume';
-                statusEl.classList.remove('active');
+                statusText.textContent = 'System Offline';
+                statusIndicator.classList.remove('active');
                 
                 if (clockInterval) {
                     clearInterval(clockInterval);
@@ -409,12 +646,17 @@
         // Close alarm when clicking overlay
         overlay.addEventListener('click', dismissAlarm);
 
-        // Start clock display immediately (but not monitoring)
+        // Start clock display immediately and enable monitoring by default
         setInterval(updateClock, 1000);
         updateClock();
 
         // Show initial alarm count
-        alarmCountEl.textContent = `Alarms triggered today: ${alarmCount}`;
+        alarmCountValue.textContent = alarmCount;
+
+        // Auto-start monitoring on page load
+        window.addEventListener('load', () => {
+            startMonitoring();
+        });
     </script>
 </body>
 </html>
